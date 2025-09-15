@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:todos/SH%20ToDo/to_do_list_page.dart';
+import 'package:todos/YT%20Todo/todolist.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -8,8 +10,43 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  List<ToDo> todos = [
+    ToDo(title: 'late night sleep', isDone: true),
+  ];
+  String filter = 'All';
+  final _controller = TextEditingController();
+
+  void checkBoxChanged(int index) {
+    setState(() {
+      todos[index].isDone = !todos[index].isDone;
+    });
+  }
+
+  void saveNewTask() {
+    setState(() {
+      todos.add(ToDo(title: _controller.text, isDone: false));
+      _controller.clear();
+    });
+  }
+
+  void deletTask(int index) {
+    setState(() {
+      todos.removeAt(index);
+    });
+  }
+
+  int get remaining => todos.where((t) => !t.isDone).length;
+
   @override
   Widget build(BuildContext context) {
+    List<ToDo> filteredTodos;
+    if (filter == 'Active') {
+      filteredTodos = todos.where((t) => !t.isDone).toList();
+    } else if (filter == "Completed") {
+      filteredTodos = todos.where((t) => t.isDone).toList();
+    } else {
+      filteredTodos = todos;
+    }
     return SafeArea(
       child: Scaffold(
         backgroundColor: const Color.fromARGB(255, 166, 185, 209),
@@ -46,12 +83,22 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(
                 height: 26,
               ),
-              const TextField(
+              TextField(
+                controller: _controller,
                 decoration: InputDecoration(
-                  labelText: 'What Need To be done?',
-                  labelStyle: TextStyle(
-                    fontSize: 28,
-                    color: Colors.blueAccent,
+                  hintText: 'What Needs To Be done?',
+                  filled: true,
+                  fillColor: const Color.fromARGB(255, 143, 170, 215),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Colors.white,
+                    ),
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: const BorderSide(
+                      color: Color.fromARGB(255, 127, 152, 209),
+                    ),
                   ),
                 ),
               ),
@@ -62,15 +109,54 @@ class _HomePageState extends State<HomePage> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
-                  textWidget('item remaining'),
+                  //textWidget('item remaining'),
+                  Text("$remaining item left"),
                   textWidget('All'),
                   textWidget('Active'),
                   textWidget('Completed'),
                 ],
               ),
-            
+              Expanded(
+                child: ListView.builder(
+                  itemCount: filteredTodos.length,
+                  itemBuilder: (context, index) {
+                    final todo = filteredTodos[index];
+
+                    return Card(
+                      color: const Color.fromARGB(255, 192, 204, 214),
+                      child: CheckboxListTile(
+                        title: Text(
+                          todo.title.isEmpty ? " " : todo.title,
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        value: todo.isDone,
+                        onChanged: (value) {
+                          setState(() {
+                            todo.isDone = value!;
+                          });
+                        },
+                        activeColor: Colors.deepPurple,
+                      ),
+                    );
+                  },
+                ),
+              ),
             ],
           ),
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.grey.shade400,
+          child: const Icon(
+            Icons.add,
+            color: Colors.deepPurple,
+          ),
+          onPressed: () {
+            saveNewTask();
+          },
         ),
       ),
     );
@@ -79,7 +165,11 @@ class _HomePageState extends State<HomePage> {
   Expanded textWidget(String title) {
     return Expanded(
       child: TextButton(
-        onPressed: () {},
+        onPressed: () {
+          setState(() {
+            filter = title;
+          });
+        },
         child: Text(
           title,
           overflow: TextOverflow.ellipsis,
