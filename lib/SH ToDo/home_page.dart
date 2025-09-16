@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   List<ToDo> todos = [
-    ToDo(title: 'late night sleep', isDone: true),
+    //ToDo(title: 'late night sleep', isDone: true),
   ];
   String filter = 'All';
   final _controller = TextEditingController();
@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
     }
     return SafeArea(
       child: Scaffold(
-        backgroundColor: const Color.fromARGB(255, 166, 185, 209),
+        backgroundColor: Colors.white,
         // appBar: AppBar(
         //   backgroundColor: Colors.blue,
         //   elevation: 0,
@@ -67,39 +67,53 @@ class _HomePageState extends State<HomePage> {
         body: Padding(
           padding: const EdgeInsets.all(16),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               const SizedBox(
-                height: 86,
+                height: 16,
               ),
-              Center(
-                child: Text(
-                  'ToDos',
-                  style: TextStyle(
-                      fontSize: 60,
-                      fontWeight: FontWeight.bold,
-                      color: const Color.fromARGB(255, 7, 40, 222)),
+
+              Text(
+                'Todos',
+                style: TextStyle(
+                  fontSize: 80,
+                  color: const Color.fromARGB(255, 152, 199, 240),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
+
               const SizedBox(
-                height: 26,
+                height: 12,
               ),
+              // Text(
+              //   'What needs to be done?',
+              //   style: TextStyle(
+              //     fontSize: 20,
+              //     color: Colors.black54,
+              //     fontWeight: FontWeight.w400,
+              //   ),
+              // ),
               TextField(
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'What Needs To Be done?',
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 143, 170, 215),
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Colors.white,
-                    ),
-                    borderRadius: BorderRadius.circular(15),
+                  hintStyle: TextStyle(
+                    fontSize: 28,
                   ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 127, 152, 209),
-                    ),
-                  ),
+
+                  //filled: true,
+                  // fillColor: const Color.fromARGB(255, 143, 170, 215),
+                  // enabledBorder: OutlineInputBorder(
+                  //   // borderSide: const BorderSide(
+                  //   //   color: Colors.white,
+                  //   // ),
+                  //   borderRadius: BorderRadius.circular(15),
+                  // ),
+                  // focusedBorder: OutlineInputBorder(
+                  //   borderSide: const BorderSide(
+                  //     color: Color.fromARGB(255, 127, 152, 209),
+                  //   ),
+                  // ),
                 ),
               ),
               // const Divider(
@@ -118,19 +132,26 @@ class _HomePageState extends State<HomePage> {
               ),
               Expanded(
                 child: ListView.builder(
+                  padding: EdgeInsets.zero,
                   itemCount: filteredTodos.length,
                   itemBuilder: (context, index) {
                     final todo = filteredTodos[index];
 
                     return Card(
-                      color: const Color.fromARGB(255, 192, 204, 214),
+                      //margin: EdgeInsets.zero,
+                      elevation: 4,
+                      margin: EdgeInsets.symmetric(vertical: 0.5),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.horizontal(),
+                      ),
+                      color: Colors.white,
                       child: CheckboxListTile(
                         title: Text(
                           todo.title.isEmpty ? " " : todo.title,
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                            //fontWeight: FontWeight.bold,
                           ),
                         ),
                         value: todo.isDone,
@@ -139,25 +160,50 @@ class _HomePageState extends State<HomePage> {
                             todo.isDone = value!;
                           });
                         },
+                        controlAffinity: ListTileControlAffinity.leading,
                         activeColor: Colors.deepPurple,
                       ),
                     );
                   },
                 ),
               ),
+              //SizedBox(height: 90,),
             ],
           ),
         ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.grey.shade400,
-          child: const Icon(
-            Icons.add,
-            color: Colors.deepPurple,
+
+        floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 20),
+          child: Container(
+             // padding:  EdgeInsets.only(bottom: 20),
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(
+                colors: [Colors.grey, Colors.grey.shade300],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+          
+            child: FloatingActionButton(
+              //backgroundColor: Colors.grey.shade500,
+              backgroundColor: Colors.transparent,
+              shape: CircleBorder(),
+              
+              child: const Icon(
+                Icons.add,
+                color: Colors.deepPurple,
+              ),
+          
+              onPressed: () {
+                saveNewTask();
+              },
+            ),
+            
           ),
-          onPressed: () {
-            saveNewTask();
-          },
         ),
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        
       ),
     );
   }
@@ -173,6 +219,10 @@ class _HomePageState extends State<HomePage> {
         child: Text(
           title,
           overflow: TextOverflow.ellipsis,
+           style: TextStyle(
+          color: filter == title ? Colors.deepPurple : Colors.black, // ✅ selected/unselected
+          fontWeight: filter == title ? FontWeight.bold : FontWeight.normal, // optional
+        ),
         ),
       ),
     );
