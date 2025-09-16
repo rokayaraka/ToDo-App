@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todos/SH%20ToDo/card_list.dart';
 import 'package:todos/SH%20ToDo/to_do_list_page.dart';
 import 'package:todos/YT%20Todo/todolist.dart';
 
@@ -137,33 +138,7 @@ class _HomePageState extends State<HomePage> {
                   itemBuilder: (context, index) {
                     final todo = filteredTodos[index];
 
-                    return Card(
-                      //margin: EdgeInsets.zero,
-                      elevation: 4,
-                      margin: EdgeInsets.symmetric(vertical: 0.5),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.horizontal(),
-                      ),
-                      color: Colors.white,
-                      child: CheckboxListTile(
-                        title: Text(
-                          todo.title.isEmpty ? " " : todo.title,
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 18,
-                            //fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        value: todo.isDone,
-                        onChanged: (value) {
-                          setState(() {
-                            todo.isDone = value!;
-                          });
-                        },
-                        controlAffinity: ListTileControlAffinity.leading,
-                        activeColor: Colors.deepPurple,
-                      ),
-                    );
+                    return CardList(todo: todo);
                   },
                 ),
               ),
